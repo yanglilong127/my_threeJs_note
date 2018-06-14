@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>点线</title>
+	<style>
+		*{ margin:0 auto; padding: 0}
+		html,body{ height: 100%; width: 100% }
+		#box{ 
+			width: 100%; height: 600px;
+			background:#eeeeee;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<div id="box"></div>
+
+<script src='three.js'></script>
+<script>
+var box_ele = document.getElementById('box');
+var box_width = box_ele.clientWidth;
+var box_height = box_ele.clientHeight;
+
+var renderer;  //渲染器
+function initThree(){  //初始化渲染器
+	renderer = new THREE.WebGLRenderer({
+		antialias: true //渲染更清晰点，更占用资源
+	});
+	renderer.setSize(box_width, box_height);
+	box_ele.appendChild(renderer.domElement);
+	renderer.setClearColor(0xFFFFFF, 1.0); //设置清除颜色
+}
+
+var camera;  //相机
+function initCamera(){
+	camera = new THREE.PerspectiveCamera(45, box_width/box_height, 1, 10000);
+	camera.position.x =0;
+	camera.position.y = 1000;
+	camera.position.z =0;
+	camera.up.x = 0;
+	camera.up.y = 0;
+	camera.up.z = 1;
+	camera.lookAt({
+		x: 0,
+		y: 0,
+		z: 0
+	});
+}
+
+var scene;  //场景
+function initScene(){
+	scene = new THREE.Scene();
+}
+
+var light;  //灯光
+function initLight(){
+	light = new THREE.DirectionalLight(0xFF0000, 1.0, 0); //方向光源
+	light.position.set(100, 100, 200);
+	scene.add(light);
+}
+
+var cube;  //网格
+function initObject(){
+	var geometry = new THREE.Geometry();  //几何图形
+	var material = new THREE.LineBasicMaterial({vertexColors: true}); //材质
+	var color1 = new THREE.Color(0x444444), color2 = new THREE.Color(0xFF0000);
+
+	//线的材质可以由两个点的颜色决定
+	//定义点
+	var p1 = new THREE.Vector3(-100, 0, 100);
+	//p1.set(4,8,9);
+	var p2 = new THREE.Vector3(100, 0, -100);
+	//vertices存放点
+	geometry.vertices.push(p1);
+	geometry.vertices.push(p2);
+	//为两个点设置不同的颜色
+	geometry.colors.push(color1, color2);
+
+	//定义一条线, 使用LineSegments,还有LinePieces 类
+	var line = new THREE.Line(geometry, material, THREE.LineSegments);
+	scene.add(line);
+}
+
+function threeStart(){
+	initThree();
+	initCamera();
+	initScene();
+	initLight();
+	initObject();
+	renderer.clear(); //清除屏幕，刷成设置的颜色
+	renderer.render(scene, camera);
+}
+
+threeStart();
+
+
+</script>
+</body>
+</html>
